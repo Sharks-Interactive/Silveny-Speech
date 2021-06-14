@@ -34,7 +34,9 @@
     </div>
 </body>
 
-<script>
+<script type="module">
+    import dictionary from 'https://cdn.jsdelivr.net/gh/Sharks-Interactive/SilvenySpeech/dictionary.js';
+    
     var inputField = document.getElementById('js-input-trans');
     var outputField = document.getElementById('js-output-trans');
     inputField.addEventListener('input', inputEvent);
