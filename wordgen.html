@@ -35,6 +35,74 @@
 </body>
 
 <script>
+    const dictionary = {
+        "Neigh": "Hi",
+        "Néigh": "Fly",
+        "Nneigh": "Friend",
+        "Ṅeigh": "Help",
+        "Nee": "Dead",
+        " ": " ",
+        "Eigh": "Sleep",
+        "Neiǧh": "Home",
+        "Neɨgh": "Elf",
+        "Ɲeigh": "School/hell",
+        "Neeeiigh": "very/naughty/word",
+        "Negh": "sad",
+        "Neo": "No",
+        "Nieghe": "Chill",
+        "Hniegh": "book",
+        "Neihg": "come",
+        "Nee": "play",
+        "Nieggh": "genius",
+        "Nogh": "Now",
+        "Noeigh": "More",
+        "Neiogh": "Less",
+        "Eig": "Pain",
+        "Ni": "die",
+        "Nogḥ": "work",
+        "N": "in",
+        "Giddy up": "go",
+        "Noeiiigh": "hole",
+        "Nieό": "human",
+        "N": "I",
+        "Nhem": "them",
+        "Igh": "end",
+        "Ne": "start",
+        "No": "OwensMusic",
+        "Ha": "of",
+        "Neigh": "Good",
+        "Nah": "Bad",
+    };
+
+    const letterDic = {
+        "A": "I",
+        "B": "gh",
+        "C": "ei",
+        "D": "w",
+        "E": " ė",
+        "F": "ie",
+        "G": "Gh",
+        "H": "Hg",
+        "I": "Ô",
+        "J": "eg",
+        "K": "ဌ",
+        "L": "nie",
+        "M": "Ń",
+        "N": "NN",
+        "O": "Y ",
+        "P": "hn",
+        "Q": "ğ",
+        "R": "ñ",
+        "S": "ö",
+        "T": "T",
+        "U": "Oh ",
+        "V": "G",
+        "W": "ẻ",
+        "X": "Ĭ",
+        "Y": "Nne",
+        "Z": "9",
+    }
+
     var inputField = document.getElementById('js-input-trans');
     var outputField = document.getElementById('js-output-trans');
     inputField.addEventListener('input', inputEvent);
@@ -47,12 +115,13 @@
         for (let z = 0; z < words.length; z++) {
             let element = filterPunctuation(words[z]);
 
-            var prefix = getPrefix(z, words);
-            var suffix = '';
+            var prefix = "\"" + words[z] + "\": \"";
+            var suffix = "\",";
 
             newString += prefix + findValueByKey(element[0]) + suffix + element[1];
         }
         outputField.value = newString;
+        console.log(newString);
     }
 
     function findValueByKey(searchKey) {
@@ -63,7 +132,20 @@
                 else
                     return key.charAt(0).toLowerCase() + key.substr(1);
 
-        return searchKey;
+        const baseStringStart = "N";
+        const baseStringEnds = ["eh", "heh", "he", "gh", "heg", "dg"];
+        let middleOfString = '';
+
+        const charArr = searchKey.split('');
+        for (let v = 0; v < charArr.length; v++) {
+            const element = charArr[v];
+            for (const [key, value] of Object.entries(letterDic))
+            {
+                if (key.toLowerCase() == charArr[v].toLowerCase())
+                    middleOfString += value;
+            }
+        }
+        return baseStringStart + middleOfString + baseStringEnds[Math.floor(Math.random() * baseStringEnds.length)];
     }
 
     function getPrefix(z, words) {
