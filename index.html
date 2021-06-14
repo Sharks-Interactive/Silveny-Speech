@@ -45,25 +45,33 @@
         "Eigh": "Sleep",
         "Neiǧh": "Home",
         "Neɨgh": "Elf",
-        "Ɲeigh": "Hell",
-        "Neeeiigh": "Naughty",
-        "Negh": "Sad",
+        "Ɲeigh": "School/hell",
+        "Neeeiigh": "very/naughty/word",
+        "Negh": "sad",
         "Neo": "No",
-        "NiEghe": "Chill",
-        "Hniegh": "Book",
-        "Neihg": "Come",
-        "Nee": "Play",
-        "Nieggh": "Genius",
+        "Nieghe": "Chill",
+        "Hniegh": "book",
+        "Neihg": "come",
+        "Nee": "play",
+        "Nieggh": "genius",
         "Nogh": "Now",
-        "noeigh": "More",
+        "Noeigh": "More",
         "Neiogh": "Less",
         "Eig": "Pain",
-        "Ni": "Die",
-        "Nogḥ": "Work",
-        "N": "In",
-        "Giddy-up": "Go",
-        "Noeiiigh": "Hole",
-        "nieό": "Human",
+        "Ni": "die",
+        "Nogḥ": "work",
+        "N": "in",
+        "Giddy up": "go",
+        "Noeiiigh": "hole",
+        "Nieό": "human",
+        "N": "I",
+        "Nhem": "them",
+        "Igh": "end",
+        "Ne": "start",
+        "No": "OwensMusic",
+        "Ha": "of",
+        "Neigh": "Good",
+        "Nah": "Bad",
     };
 
     var inputField = document.getElementById('js-input-trans');
@@ -76,12 +84,12 @@
         var newString = '';
 
         for (let z = 0; z < words.length; z++) {
-            const element = words[z];
+            let element = filterPunctuation(words[z]);
 
             var prefix = getPrefix(z, words);
             var suffix = '';
 
-            newString += prefix + findValueByKey(element) + suffix;
+            newString += prefix + findValueByKey(element[0]) + suffix + element[1];
         }
         outputField.value = newString;
     }
@@ -102,6 +110,30 @@
         if (words[z - 1] == ' ') // Previous char is space
             return '';
         return ' '; // Space since last char is part of word
+    }
+
+    function filterPunctuation(string) {
+        let newString;
+        let punc2;
+        const punc = [
+            '.',
+            ',',
+            '?',
+            '!',
+            ';',
+        ];
+        punc.forEach(element => {
+            if (string.includes(element)) {
+                newString = string.replace(element, '');
+                punc2 = element;
+            }
+        });
+        if (!punc2) {
+            newString = string;
+            punc2 = "";
+        }
+
+        return [newString, punc2];
     }
 
 </script>
