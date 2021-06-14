@@ -37,14 +37,15 @@
 <script type="module">
     import dictionary from 'https://sharks-interactive.github.io/SilvenySpeech/dictionary.js';
     
-    console.log(dictionary);
     var inputField = document.getElementById('js-input-trans');
     var outputField = document.getElementById('js-output-trans');
     inputField.addEventListener('input', inputEvent);
+    var cacheDictionary = {};
 
     function inputEvent(event) {
         var val = event.target.value;
         var words = val.split(' ');
+
         var newString = '';
 
         for (let z = 0; z < words.length; z++) {
@@ -59,12 +60,23 @@
     }
 
     function findValueByKey(searchKey) {
+        if (cacheDictionary)
+            for (const [key, value] of Object.entries(cacheDictionary))
+                if (key.toLowerCase() == searchKey.toLowerCase())
+                    if (searchKey.charAt(0) == searchKey.charAt(0).toUpperCase())
+                        return value;
+                    else
+                        return value.charAt(0).toLowerCase() + value.substr(1);
+
         for (const [key, value] of Object.entries(dictionary))
-            if (value.toLowerCase() == searchKey.toLowerCase())
+            if (key.toLowerCase() == searchKey.toLowerCase())
+            {
+                cacheDictionary[key] = value;
                 if (searchKey.charAt(0) == searchKey.charAt(0).toUpperCase())
-                    return key;
+                    return value;
                 else
-                    return key.charAt(0).toLowerCase() + key.substr(1);
+                    return value.charAt(0).toLowerCase() + value.substr(1);
+            }
 
         return searchKey;
     }

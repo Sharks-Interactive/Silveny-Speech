@@ -1,37 +1,9 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <title>
-        KOTLC Neighlish Translator
-    </title>
-
-</head>
-
-<style>
-    /* latin */
-    @font-face {
-        font-family: 'Calligraffitti';
-        font-style: normal;
-        font-weight: 400;
-        src: url(https://fonts.gstatic.com/s/calligraffitti/v12/46k2lbT3XjDVqJw3DCmCFjE0vkFeOZc.woff2) format('woff2');
-        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-    }
-
-</style>
-
 <body>
-    <h1 style="text-align: center; font-family: Calligraffitti; font-size: 50px;">KOTLC Silveny Speech</h1>
-    <div style="margin-top: 1.5%; height: 20vh; box-shadow: 0px 8px 9px -5px rgba(0, 0, 0, 0.2),
-    0px 15px 22px 2px rgba(0, 0, 0, 0.14),
-    0px 6px 28px 5px rgba(0, 0, 0, 0.12); margin-left: auto; text-align: center;">
-        <input style="font-family: 'Courier New', Courier, monospace; margin-top: 2.5%; display: inline-block; margin: auto; box-shadow: 0px 8px 9px -5px rgba(0, 0, 0, 0.2),
-            0px 15px 22px 2px rgba(0, 0, 0, 0.14),
-            0px 6px 28px 5px rgba(0, 0, 0, 0.12); height: 50px; font-size: 50px;" type="text" id='js-input-trans' placeholder="Input" />
-        <input style="font-family: 'Courier New', Courier, monospace; margin-top: 2.5%; display: inline-block; box-shadow: 0px 8px 9px -5px rgba(0, 0, 0, 0.2),
-            0px 15px 22px 2px rgba(0, 0, 0, 0.14),
-            0px 6px 28px 5px rgba(0, 0, 0, 0.12); height: 50px; font-size: 50px;" type="text" id="js-output-trans" placeholder="Output" readonly />
-    </div>
+    <p id="js-status">Words processed 0/0 (0%) Rate: 0/s Eta: Calculating..</p>
+    <button id="js-start" onclick="loadWordsFromClip()">Start</button>
 </body>
 
 <script>
@@ -75,53 +47,82 @@
     };
 
     const letterDic = {
-        "A": "I",
-        "B": "gh",
-        "C": "ei",
-        "D": "w",
-        "E": " ė",
-        "F": "ie",
-        "G": "Gh",
-        "H": "Hg",
-        "I": "Ô",
-        "J": "eg",
+        "A": "a",
+        "B": "b",
+        "C": "c",
+        "D": "d",
+        "E": "ė",
+        "F": "f",
+        "G": "G",
+        "H": "H",
+        "I": "i",
+        "J": "j",
         "K": "ဌ",
-        "L": "nie",
-        "M": "Ń",
-        "N": "NN",
-        "O": "Y ",
-        "P": "hn",
-        "Q": "ğ",
-        "R": "ñ",
-        "S": "ö",
+        "L": "w",
+        "M": "m",
+        "N": "N",
+        "O": "o",
+        "P": "p",
+        "Q": "q",
+        "R": "r",
+        "S": "s",
         "T": "T",
-        "U": "Oh ",
-        "V": "G",
+        "U": "u",
+        "V": "v",
         "W": "ẻ",
         "X": "Ĭ",
-        "Y": "Nne",
-        "Z": "9",
+        "Y": "y",
+        "Z": "z",
     }
 
-    var inputField = document.getElementById('js-input-trans');
-    var outputField = document.getElementById('js-output-trans');
-    inputField.addEventListener('input', inputEvent);
+    let lps = 0;
+    let letters = 0;
+    setInterval(() => {
+        lps = letters;
+        letters = 0;
+    }, 1000);
 
-    function inputEvent(event) {
-        var val = event.target.value;
-        var words = val.split(' ');
+    async function loadWordsFromClip() {
+        calcLoadWordsFromClip(await navigator.clipboard.readText());
+    }
+
+    function calcLoadWordsFromClip(_val) {
+        var time = new Date();
+        var status = document.getElementById('js-status');
+        console.log(status.innerText);
+        document.getElementById("js-start").style.display = "none";
+        var val = _val;
+        var words = val.split(/\n/);
         var newString = '';
+        let lastsec = 0;
+        var t0 = performance.now();
 
         for (let z = 0; z < words.length; z++) {
             let element = filterPunctuation(words[z]);
 
+            console.log('Words processed ' + z + '/' + words.length + ' (' + ((z / words.length) * 100) + '%) Rate: ' + lps + '/s Eta: ' + ((words.length - z) / lps) + ' seconds!');
+            status.innerText = 'Words processed ' + z + '/' + words.length + ' (' + ((z / words.length) * 100) + '%) Rate: ' + lps + '/s Eta: ' + ((words.length - z) / lps) + ' seconds!';
             var prefix = "\"" + words[z] + "\": \"";
             var suffix = "\",";
-
+            letters++;
+            if (performance.now() > t0 + 1000) {
+                lps = letters;
+                letters = 0;
+                t0 = performance.now()
+            }
             newString += prefix + findValueByKey(element[0]) + suffix + element[1];
         }
-        outputField.value = newString;
+        //copyToClipboard(newString);
         console.log(newString);
+    }
+
+    function copyToClipboard(text) {
+        const elem = document.createElement('textarea');
+        elem.value = text;
+        document.body.appendChild(elem);
+        elem.select();
+        document.execCommand('copy');
+        document.body.removeChild(elem);
     }
 
     function findValueByKey(searchKey) {
@@ -133,18 +134,20 @@
                     return key.charAt(0).toLowerCase() + key.substr(1);
 
         const baseStringStart = "N";
-        const baseStringEnds = ["eh", "heh", "he", "gh", "heg", "dg"];
+        const baseStringEnds = ["eh", "h", "h", "gh", "h", "h"];
         let middleOfString = '';
 
         const charArr = searchKey.split('');
         for (let v = 0; v < charArr.length; v++) {
             const element = charArr[v];
-            for (const [key, value] of Object.entries(letterDic))
-            {
-                if (key.toLowerCase() == charArr[v].toLowerCase())
-                    middleOfString += value;
-            }
+            if (v != 0 && v != charArr.length - 1)
+                for (const [key, value] of Object.entries(letterDic)) {
+                    if (key.toLowerCase() == charArr[v].toLowerCase())
+                        middleOfString += value;
+                }
         }
+        middleOfString = middleOfString.replace(' ', '');
+
         return baseStringStart + middleOfString + baseStringEnds[Math.floor(Math.random() * baseStringEnds.length)];
     }
 
