@@ -92,7 +92,11 @@
         console.log(status.innerText);
         document.getElementById("js-start").style.display = "none";
         var val = _val.replace('/\r/', '');
-        var words = val.split(/\n/);
+        var words;
+        if (val.split(/\n/).length > 10)
+            words = val.split(/\n/);
+        else
+            words = val.split(' ');
         
         var newString = '';
         let lastsec = 0;
@@ -115,6 +119,7 @@
         }
         //copyToClipboard(newString);
         console.log(newString);
+        status.innerText = newString;
     }
 
     function copyToClipboard(text) {
