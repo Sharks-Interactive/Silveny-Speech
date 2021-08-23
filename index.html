@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>
-        KOTLC Neighlish Translator
+        Neighlish Translator
     </title>
-
 </head>
-
 <style>
     /* latin */
     @font-face {
@@ -17,11 +14,10 @@
         src: url(https://fonts.gstatic.com/s/calligraffitti/v12/46k2lbT3XjDVqJw3DCmCFjE0vkFeOZc.woff2) format('woff2');
         unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
     }
-
 </style>
 
 <body>
-    <h1 style="text-align: center; font-family: Calligraffitti; font-size: 50px;">KOTLC Silveny Speech</h1>
+    <h1 style="text-align: center; font-family: Calligraffitti; font-size: 50px;">Silveny Speech</h1>
     <div style="margin-top: 1.5%; height: 30vh; box-shadow: 0px 8px 9px -5px rgba(0, 0, 0, 0.2),
     0px 15px 22px 2px rgba(0, 0, 0, 0.14),
     0px 6px 28px 5px rgba(0, 0, 0, 0.12); margin-left: auto; text-align: center;">
@@ -35,12 +31,13 @@
 </body>
 
 <script type="module">
-    import dictionary from 'https://sharks-interactive.github.io/SilvenySpeech/dictionary.js';
+    import dictionary from 'https://sharks-interactive.github.io/Silveny-Speech/dictionary.js';
     
     var inputField = document.getElementById('js-input-trans');
     var outputField = document.getElementById('js-output-trans');
-    inputField.addEventListener('input', inputEvent);
     var cacheDictionary = {};
+
+    inputField.addEventListener('input', inputEvent);
 
     function inputEvent(event) {
         var val = event.target.value;
@@ -111,7 +108,5 @@
 
         return [newString, punc2];
     }
-
 </script>
-
 </html>
