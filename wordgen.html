@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html>
-
 <body>
     <p id="js-status">Words processed 0/0 (0%) Rate: 0/s Eta: Calculating..</p>
     <button id="js-start" onclick="loadWordsFromClip()">Start</button>
 </body>
-
 <script>
     const dictionary = {
         "Neigh": "Hi",
@@ -117,7 +115,6 @@
             }
             newString += prefix + findValueByKey(element[0]) + suffix + element[1];
         }
-        //copyToClipboard(newString);
         console.log(newString);
         status.innerText = newString;
     }
@@ -186,7 +183,5 @@
 
         return [newString, punc2];
     }
-
 </script>
-
 </html>
