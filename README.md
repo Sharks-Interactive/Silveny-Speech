@@ -1,5 +1,5 @@
 # Silveny Speech
-Simple example of a translator web app using vanilla javascript.
+Simple web app to translate from an imaginary language 'NeighLish' spoken by the horse 'Silveny'.
 
 # Sources
 wordgen.html  - utility for generating dictionaries for this app   
