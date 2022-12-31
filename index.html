@@ -1,112 +1,79 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>
-        Neighlish Translator
-    </title>
-</head>
-<style>
-    /* latin */
-    @font-face {
-        font-family: 'Calligraffitti';
-        font-style: normal;
-        font-weight: 400;
-        src: url(https://fonts.gstatic.com/s/calligraffitti/v12/46k2lbT3XjDVqJw3DCmCFjE0vkFeOZc.woff2) format('woff2');
-        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-    }
-</style>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<body>
-    <h1 style="text-align: center; font-family: Calligraffitti; font-size: 50px;">Silveny Speech</h1>
-    <div style="margin-top: 1.5%; height: 30vh; box-shadow: 0px 8px 9px -5px rgba(0, 0, 0, 0.2),
-    0px 15px 22px 2px rgba(0, 0, 0, 0.14),
-    0px 6px 28px 5px rgba(0, 0, 0, 0.12); margin-left: auto; text-align: center;">
-        <textarea name="Text1" cols="40" rows="5" style="font-family: 'Courier New', Courier, monospace; margin-top: 2.5%; display: inline-block; margin: auto; box-shadow: 0px 8px 9px -5px rgba(0, 0, 0, 0.2),
-    0px 15px 22px 2px rgba(0, 0, 0, 0.14),
-    0px 6px 28px 5px rgba(0, 0, 0, 0.12); height: 50px; font-size: 50px;" id='js-input-trans' placeholder="Input"></textarea>
-        <textarea cols="40" rows="5" style="font-family: 'Courier New', Courier, monospace; margin-top: 2.5%; display: inline-block; box-shadow: 0px 8px 9px -5px rgba(0, 0, 0, 0.2),
-            0px 15px 22px 2px rgba(0, 0, 0, 0.14),
-            0px 6px 28px 5px rgba(0, 0, 0, 0.12); height: 50px; font-size: 50px;" type="text" id="js-output-trans" placeholder="Output" readonly></textarea>
+        <title> Neighlish Translator </title>
+    </head>
+    <style>
+        @font-face {
+            font-family: 'Calligraffitti';
+            font-style: normal;
+            font-weight: 400;
+
+            src: url(https://fonts.gstatic.com/s/calligraffitti/v12/46k2lbT3XjDVqJw3DCmCFjE0vkFeOZc.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+
+        textarea {
+            width: 45%;
+
+            box-shadow: 0px 8px 9px -5px rgba(0, 0, 0, 0.2), 0px 15px 22px 2px rgba(0, 0, 0, 0.14), 0px 6px 28px 5px rgba(0, 0, 0, 0.12);
+
+            font-family: 'Courier New', Courier, monospace; 
+            font-size: 25px;
+        }
+    </style>
+
+    <body>
+        <h1 style="text-align: center; font-family: Calligraffitti; font-size: 50px;">Neighlish Translator</h1>
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; padding: 0 1% 0 1%;">
+            <textarea rows="10" id='js-input-trans' placeholder="Type English here..."></textarea>
+            <textarea rows="10" id='js-output-trans' placeholder="Neighlish" readonly></textarea>
         </div>
-</body>
+    </body>
 
-<script type="module">
-    import dictionary from 'https://sharks-interactive.github.io/Silveny-Speech/dictionary.js';
-    
-    var inputField = document.getElementById('js-input-trans');
-    var outputField = document.getElementById('js-output-trans');
-    var cacheDictionary = {};
+    <script type="module">
+        import dictionary from 'https://sharks-interactive.github.io/Silveny-Speech/dictionary.js';
 
-    inputField.addEventListener('input', inputEvent);
+        const outputField = document.getElementById('js-output-trans');
 
-    function inputEvent(event) {
-        var val = event.target.value;
-        var words = val.split(' ');
+        document.getElementById('js-input-trans').addEventListener('input', inputEvent);
 
-        var newString = '';
+        const getPrefix = (i, words) =>
+            (i == 0 || words[i - 1] == ' ') ? '' : ' '; // No previous char
 
-        for (let z = 0; z < words.length; z++) {
-            let element = filterPunctuation(words[z]);
+        function inputEvent(event) {
+            const words = event.target.value.split(' ');
+            var output = '';
 
-            var prefix = getPrefix(z, words);
-            var suffix = '';
-
-            newString += prefix + findValueByKey(element[0]) + suffix + element[1];
-        }
-        outputField.value = newString;
-    }
-
-    function findValueByKey(searchKey) {
-        if (cacheDictionary)
-            for (const [key, value] of Object.entries(cacheDictionary))
-                if (key.toLowerCase() == searchKey.toLowerCase())
-                    if (searchKey.charAt(0) == searchKey.charAt(0).toUpperCase())
-                        return value;
-                    else
-                        return value.charAt(0).toLowerCase() + value.substr(1);
-
-        for (const [key, value] of Object.entries(dictionary))
-            if (key.toLowerCase() == searchKey.toLowerCase())
-            {
-                cacheDictionary[key] = value;
-                if (searchKey.charAt(0) == searchKey.charAt(0).toUpperCase())
-                    return value;
-                else
-                    return value.charAt(0).toLowerCase() + value.substr(1);
+            for (let z = 0; z < words.length; z++) {
+                let element = filterPunctuation(words[z]);
+                output += getPrefix(z, words) + findValueByKey(element[0]) + element[1];
             }
-
-        return searchKey;
-    }
-
-    function getPrefix(z, words) {
-        if (z == 0) return ''; // No previous char
-        if (words[z - 1] == ' ') // Previous char is space
-            return '';
-        return ' '; // Space since last char is part of word
-    }
-
-    function filterPunctuation(string) {
-        let newString;
-        let punc2;
-        const punc = [
-            '.',
-            ',',
-            '?',
-            '!',
-            ';',
-        ];
-        punc.forEach(element => {
-            if (string.includes(element)) {
-                newString = string.replace(element, '');
-                punc2 = element;
-            }
-        });
-        if (!punc2) {
-            newString = string;
-            punc2 = "";
+            outputField.value = output;
         }
 
-        return [newString, punc2];
-    }
-</script>
+        function findValueByKey(searchKey) {
+            let result = dictionary[searchKey.toLowerCase()];
+
+            if (result) return searchKey.charAt(0).toUpperCase() != searchKey.charAt(0) ? result.charAt(0).toLowerCase() + result.substr(1) : result; 
+
+            return searchKey;
+        }
+
+        function filterPunctuation(string) {
+            let punc = "";
+
+            [ '.', ',', '?', '!', ';', ].forEach(element => {
+                if (string.includes(element)) {
+                    string = string.replaceAll(element, '');
+                    punc = element;
+                }
+            });
+
+            return [string, punc];
+        }
+    </script>
 </html>

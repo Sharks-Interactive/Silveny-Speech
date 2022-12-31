@@ -84,7 +84,7 @@
         calcLoadWordsFromClip(await navigator.clipboard.readText());
     }
 
-    function calcLoadWordsFromClip(_val) {
+    async function calcLoadWordsFromClip(_val) {
         var time = new Date();
         var status = document.getElementById('js-status');
         console.log(status.innerText);
