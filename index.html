@@ -19,27 +19,91 @@
         textarea {
             width: 45%;
 
-            box-shadow: 0px 8px 9px -5px rgba(0, 0, 0, 0.2), 0px 15px 22px 2px rgba(0, 0, 0, 0.14), 0px 6px 28px 5px rgba(0, 0, 0, 0.12);
-
             font-family: 'Courier New', Courier, monospace; 
             font-size: 25px;
+
+            outline: black solid 0;
+            border: 0 solid black;
+
+            border-radius: 25px;
+            padding: 20px;
+
+            resize: none;
+        }
+
+        textarea:focus {
+            box-shadow: 0px 8px 9px -5px rgba(0, 0, 0, 0.2), 0px 15px 22px 2px rgba(0, 0, 0, 0.14), 0px 6px 28px 5px rgba(0, 0, 0, 0.12);
+        }
+
+        .shadow {
+            box-shadow: 0px 8px 9px -5px rgba(0, 0, 0, 0.2), 0px 15px 22px 2px rgba(0, 0, 0, 0.14), 0px 6px 28px 5px rgba(0, 0, 0, 0.12);
+        }
+
+        p {
+            font-weight: 700;
+            font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            cursor: pointer;
+        }
+
+        p:hover {
+            color: gray;
+        }
+
+        h2 {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-weight: 400;
+
+            text-align: left;
+            
+            width: 45%;
+            padding: 0 20px 0 20px;
         }
     </style>
 
-    <body>
-        <h1 style="text-align: center; font-family: Calligraffitti; font-size: 50px;">Neighlish Translator</h1>
-        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; padding: 0 1% 0 1%;">
-            <textarea rows="10" id='js-input-trans' placeholder="Type English here..."></textarea>
-            <textarea rows="10" id='js-output-trans' placeholder="Neighlish" readonly></textarea>
+    <body style="margin: 0;">
+        <div style="background-color: whitesmoke; margin-bottom: 30px; outline: rgb(197, 197, 197) solid 1px; display: flex; gap: 10px; align-items: center;">
+            <h1 style="text-align: left; font-family: Calligraffitti; font-size: 30px; margin: 0 20px 0 20px; padding: 10px 0 10px 0;">Neighlish Translate</h1>
+            <p>about</p>
+            <p>privacy</p>
+            <p>pony express</p>
+        </div>
+        <div style="padding: 15px; border-radius: 25px; margin: 50px;" class="shadow">
+            <div id="js-s" style="display: flex; flex-wrap: wrap; justify-content: space-between; padding: 0 1% 0 1%;">
+                <h2 id="js-i" style="cursor: pointer;">English <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m15.207 2.292 4 3.995a1 1 0 0 1 .084 1.32l-.083.094-4 4.006a1 1 0 0 1-1.498-1.32l.083-.094L16.083 8H5.5a1 1 0 0 1-.994-.883L4.5 7a1 1 0 0 1 .883-.993L5.5 6h10.59l-2.296-2.293a1 1 0 0 1-.084-1.32l.083-.095a1 1 0 0 1 1.32-.084l.094.084 4 3.995-4-3.995Zm4.283 14.591.007.117a1 1 0 0 1-.883.993l-.117.007H7.913l2.294 2.293a1 1 0 0 1 .084 1.32l-.083.094a1 1 0 0 1-1.32.084l-.095-.084-4-3.996a1 1 0 0 1-.083-1.32l.083-.094 4-4.004a1 1 0 0 1 1.498 1.32l-.083.094L7.918 16h10.579a1 1 0 0 1 .993.883l.007.117-.007-.117Z" fill="#222F3D"/></svg></h2>
+                <h2 id="js-t" style="cursor: pointer;">Neighlish</h2>
+            </div>
+            <div style="outline: rgb(176, 176, 176) solid 1px; margin-bottom: 10px;"></div>
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; padding: 0 1% 0 1%;">
+                <textarea rows="10" id='js-input-trans' placeholder="Type here..."></textarea>
+                <textarea rows="10" id='js-output-trans' placeholder="Translation" readonly></textarea>
+            </div>
         </div>
     </body>
 
     <script type="module">
         import dictionary from 'https://sharks-interactive.github.io/Silveny-Speech/dictionary.js';
 
+        const inputField = document.getElementById('js-input-trans');
         const outputField = document.getElementById('js-output-trans');
 
-        document.getElementById('js-input-trans').addEventListener('input', inputEvent);
+        const inputLabel = document.getElementById('js-i');
+        const outputLabel = document.getElementById('js-t');
+        let mode = 0;
+
+        inputField.addEventListener('input', inputEvent);
+        document.getElementById('js-s').addEventListener('click', switchMode);
+
+        function switchMode() {
+            let prevOutput = outputLabel.innerHTML;
+
+            outputLabel.innerHTML = inputLabel.innerHTML;
+            inputLabel.innerHTML = prevOutput;
+
+            inputField.value = outputField.value;
+
+            mode = mode == 0 ? 1 : 0;
+            inputEvent({target: {value: inputField.value}});
+        }
 
         const getPrefix = (i, words) =>
             (i == 0 || words[i - 1] == ' ') ? '' : ' '; // No previous char
@@ -50,9 +114,24 @@
 
             for (let z = 0; z < words.length; z++) {
                 let element = filterPunctuation(words[z]);
-                output += getPrefix(z, words) + findValueByKey(element[0]) + element[1];
+                output += getPrefix(z, words) + getValueForMode(element[0]) + element[1];
             }
             outputField.value = output;
+        }
+
+        function getValueForMode(searchKey) {
+            if (mode == 0) 
+                return findValueByKey(searchKey);
+
+            return findKeybyValue(searchKey);
+        }
+
+        function findKeybyValue(searchKey) {
+            let result = Object.keys(dictionary).find(key => dictionary[key].toLowerCase() === searchKey.toLowerCase());
+
+            if (result) return searchKey.charAt(0).toUpperCase() != searchKey.charAt(0) ? result.charAt(0).toLowerCase() + result.substr(1) : result; 
+
+            return searchKey;
         }
 
         function findValueByKey(searchKey) {
